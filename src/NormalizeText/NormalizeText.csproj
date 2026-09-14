@@ -1,0 +1,48 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\NormalizeText.Core\NormalizeText.Core.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>normalize-text</AssemblyName>
+    <RootNamespace>NormalizeText</RootNamespace>
+    <Version>0.1.0</Version>
+    <Company>Strange</Company>
+    <Product>NormalizeText</Product>
+    <Description>Normalizes text files to UTF-8 (no BOM) with LF line endings.</Description>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <!--
+      No external package dependencies and no reflection-based CLI framework here,
+      so trimming is safe with no TrimmerRootAssembly hints needed. A self-contained
+      single-file trimmed publish drops the exe from about 70MB to about 12MB.
+    -->
+    <PublishSingleFile>true</PublishSingleFile>
+    <PublishTrimmed>true</PublishTrimmed>
+  </PropertyGroup>
+
+  <!--
+    Optional convenience: after `dotnet publish`, deploy the single-file exe to
+    %LocalAppData%\Programs\NormalizeText\. Add that folder to PATH once and
+    normalize-text.exe is available everywhere after every publish. No path is
+    hardcoded here - $(LocalAppData) is an MSBuild property backed by the
+    LOCALAPPDATA environment variable, resolved fresh on whatever machine builds
+    this, so nothing user-specific ends up in source control.
+  -->
+  <Target Name="DeployToLocalPrograms" AfterTargets="Publish" Condition="'$(LocalAppData)' != ''">
+    <PropertyGroup>
+      <LocalProgramsDir>$(LocalAppData)\Programs\NormalizeText\</LocalProgramsDir>
+    </PropertyGroup>
+    <ItemGroup>
+      <PublishedExe Include="$(PublishDir)normalize-text.exe" />
+    </ItemGroup>
+    <MakeDir Directories="$(LocalProgramsDir)" />
+    <Copy SourceFiles="@(PublishedExe)" DestinationFolder="$(LocalProgramsDir)" />
+    <Message Importance="high" Text="Deployed normalize-text.exe to $(LocalProgramsDir)" />
+  </Target>
+
+</Project>

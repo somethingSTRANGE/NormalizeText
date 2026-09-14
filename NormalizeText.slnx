@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/NormalizeText.Core/NormalizeText.Core.csproj" />
+    <Project Path="src/NormalizeText/NormalizeText.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/NormalizeText.Tests/NormalizeText.Tests.csproj" />
+  </Folder>
+</Solution>
