@@ -74,13 +74,26 @@ public sealed class FileProcessor(
     {
         return Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "Strange",
             "NormalizeText",
             "Backup");
     }
 
+    /// <summary>Determines whether <paramref name="path"/> ends with a directory separator.</summary>
+    /// <remarks>A trailing separator ("out\" or "out/") is treated as an unambiguous "this is a
+    ///     directory" signal even when it doesn't exist yet. This is the same convention tools
+    ///     like robocopy/rsync use to tell "copy into this folder" apart from "copy to this
+    ///     exact file path" for a not-yet-existing destination.</remarks>
+    private static bool EndsInDirectorySeparator(string path)
+    {
+        return path.EndsWith(Path.DirectorySeparatorChar) || path.EndsWith(Path.AltDirectorySeparatorChar);
+    }
+
     private static void EnsureOutputDirectoryExists(string? outputPath, int fileCount)
     {
-        if (outputPath is not null && (fileCount > 1) && !Directory.Exists(outputPath))
+        if (outputPath is not null
+            && ((fileCount > 1) || EndsInDirectorySeparator(outputPath))
+            && !Directory.Exists(outputPath))
         {
             Directory.CreateDirectory(outputPath);
         }
@@ -137,9 +150,11 @@ public sealed class FileProcessor(
         }
     }
 
-    // Warning/error messages report paths relative to whichever target produced the file - the
-    // same "root" already used for backup/output placement - so a message reads e.g.
-    // "Editor\Foo.cs" instead of repeating the full dropped-folder path on every single line.
+    /// <summary>Computes <paramref name="file"/>'s path relative to whichever target produced
+    ///     it, for display in warning/error messages.</summary>
+    /// <remarks>Reusing the same "root" already used for backup/output placement means a message
+    ///     reads e.g. "Editor\Foo.cs" instead of repeating the full dropped-folder path on every
+    ///     single line.</remarks>
     private static string RelativeToRoot(ResolvedFile file)
     {
         return Path.GetRelativePath(file.Root, file.Path);
@@ -158,7 +173,9 @@ public sealed class FileProcessor(
             return Path.Combine(outputPath, relative);
         }
 
-        return Directory.Exists(outputPath) ? Path.Combine(outputPath, Path.GetFileName(file.Path)) : outputPath;
+        return Directory.Exists(outputPath) || EndsInDirectorySeparator(outputPath)
+            ? Path.Combine(outputPath, Path.GetFileName(file.Path))
+            : outputPath;
     }
 
     private static (IReadOnlyList<ResolvedFile> Files, IReadOnlyList<string> SkippedDirectories, string? Error)

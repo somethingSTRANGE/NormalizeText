@@ -74,7 +74,7 @@ A file that can't be read or written (e.g. access denied, locked by another proc
 Whenever `--output` isn't specified, `normalize-text` backs up each file it's about to modify — before overwriting it — under:
 
 ```
-%LocalAppData%\NormalizeText\Backup\<yyyy-MM-dd HHmmss-fff>\
+%LocalAppData%\Strange\NormalizeText\Backup\<yyyy-MM-dd HHmmss-fff>\
 ```
 
 A dropped folder's subfolder structure is preserved under that timestamped backup folder. Files that are already conformant (no BOM, already LF) are left completely untouched — not rewritten, not backed up. Use `--no-backups` to skip this entirely.
@@ -82,8 +82,9 @@ A dropped folder's subfolder structure is preserved under that timestamped backu
 ### Example output
 
 ```
+Processing: C:\path\to\target
 Skipping version-control directory: '.git'.
-Backup created at: C:\Users\<you>\AppData\Local\NormalizeText\Backup\2026-09-13 182717-759
+Backup created at: %LocalAppData%\Strange\NormalizeText\Backup\2026-09-13 182717-759
 
 Summary:
   Files processed ....... 110
@@ -95,6 +96,20 @@ Summary:
   Skipped ................. 5
   Directories skipped ..... 1
 ```
+
+When there are no changes, the output looks like this:
+
+```
+Processing: C:\path\to\notes.txt
+
+Summary:
+  Files processed ... 1
+    Modified ........ 0
+```
+
+## Drag-and-drop support
+
+Dragging files or folders onto the executable in Explorer (or a desktop shortcut) opens a standalone console window showing the results. The window will remain open until dismissed.
 
 ## Building & testing
 

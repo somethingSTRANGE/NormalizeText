@@ -362,6 +362,22 @@ public class FileProcessorTests
     }
 
     [Test]
+    public void Run_SingleFile_OutputEndsInSeparatorButDoesNotExistYet_CreatesItAndReusesOriginalFileName()
+    {
+        var file = Path.Combine(this.tempDir, "a.txt");
+        File.WriteAllText(file, "hello\r\n");
+        var outDir = Path.Combine(this.tempDir, "out") + Path.DirectorySeparatorChar;
+
+        var processor = new FileProcessor(new NormalizationOptions());
+        var outcome = processor.Run([file], outDir);
+
+        Assert.That(outcome.Success, Is.True);
+        var expected = Path.Combine(this.tempDir, "out", "a.txt");
+        Assert.That(File.Exists(expected), Is.True);
+        Assert.That(File.ReadAllText(expected), Is.EqualTo("hello\n"));
+    }
+
+    [Test]
     public void Run_SingleFile_OutputIsExistingDirectory_WritesUsingOriginalFileName()
     {
         var file = Path.Combine(this.tempDir, "a.txt");
