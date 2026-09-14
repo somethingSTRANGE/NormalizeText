@@ -43,5 +43,5 @@ jobs:
         run: >-
           gh release create ${{ github.ref_name }}
           "src\NormalizeText\bin\Release\net10.0\win-x64\publish\normalize-text.exe"
-          --title ${{ github.ref_name }}
+          --title "NormalizeText ${{ steps.version.outputs.version }}"
           --generate-notes
