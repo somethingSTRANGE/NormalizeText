@@ -1,6 +1,6 @@
 # NormalizeText
 
-`normalize-text` is a Windows CLI utility (C# / .NET 10) that normalizes text files: validating and ensuring UTF-8 encoding, stripping the BOM, and enforcing LF line endings. Run it against a single file, a folder (recursively), or drop files/folders onto the executable from Windows Explorer.
+`normalize-text` is a Windows CLI utility (C# / .NET 10) that normalizes UTF-8 text files, with configurable BOM and line-ending handling — stripping the BOM and enforcing LF by default. Run it against a single file, a folder (recursively), or drop files/folders onto the executable from Windows Explorer.
 
 ## Features
 
